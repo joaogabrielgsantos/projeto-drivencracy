@@ -23,4 +23,17 @@ async function postPoll(req, res) {
 
 }
 
-export { postPoll }
+async function getPolls(req, res) {
+	try {
+		const polls = await db.collection(COLLECTIONS.POLLS).find().toArray();
+		return res.status(STATUS_CODE.OK).send(polls);
+	} catch (error) {
+		console.log(error);
+		return res.sendStatus(STATUS_CODE.SERVER_ERROR);
+	}
+}
+
+
+
+
+export { postPoll, getPolls }
