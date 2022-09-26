@@ -36,33 +36,40 @@ async function getPolls(req, res) {
 
 
 async function getResults(req, res) {
-
-    const pollId = req.params.pollId
+    const pollId = req.params.pollId;
     let maisVotos = 0;
-    let elements = {}
+    let nameVoted = "";
+    let result = {};
 
     try {
-        const opcoes = await db.collection(COLLECTIONS.CHOICES).find({ _id: ObjectId(pollId) }).toArray();
+        const opcoes = await db
+            .collection(COLLECTIONS.CHOICES)
+            .find({ pollId })
+            .toArray();
 
-        console.log(opcoes)
-        maisVotos = opcoes[0].votes
+        maisVotos = opcoes[0].votes;
+        nameVoted = opcoes[0].title;
         for (let index = 1; index < opcoes.length; index++) {
             if (maisVotos < opcoes[index].votes) {
-                maisVotos = opcoes[index].votes
-                elements = opcoes[index]
+                maisVotos = opcoes[index].votes;
+                nameVoted = opcoes[index].title;
             }
-
         }
 
-        const polls = await db.collection(COLLECTIONS.POLLS).findOne({ _id: ObjectId(pollId) });
+        result = {
+            votes: maisVotos,
+            title: nameVoted,
+        };
+        const polls = await db
+            .collection(COLLECTIONS.POLLS)
+            .findOne({ _id: ObjectId(pollId) });
 
-
-        return res.sendStatus(STATUS_CODE.OK).send({ ...polls, elements });
+        console.log(result);
+        return res.status(STATUS_CODE.OK).send({ ...polls, result });
     } catch (error) {
         console.log(error);
         return res.sendStatus(STATUS_CODE.SERVER_ERROR);
     }
-
 }
 
 
