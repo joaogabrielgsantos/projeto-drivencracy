@@ -13,11 +13,8 @@ app.use(express.json());
 app.use(pollRouter);
 app.use(choiceRouter);
 
-app.get("/status/", (req, res) => {
-    res.send("De boas");
-})
 
 
 
 
-app.listen(process.env.PORT_API, () => console.log(`Listening on port ${process.env.PORT_API}`));
+app.listen(process.env.PORT, () => console.log(`Listening on port ${process.env.PORT}`));
