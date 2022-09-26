@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(pollRouter);
 app.use(choiceRouter);
 
-app.get("/status/:id", (req, res) => {
-    console.log(req.params.id);
+app.get("/status/", (req, res) => {
+    res.send("De boas");
 })
 
 

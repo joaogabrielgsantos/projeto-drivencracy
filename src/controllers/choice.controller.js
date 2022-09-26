@@ -8,7 +8,9 @@ import { STATUS_CODE } from '../enums/statusCode.js'
 async function postChoice(req, res) {
 
   const { title, pollId } = req.body
-  const choice = { title, pollId }
+  const votes = 0
+  const choice = { title, pollId, votes }
+
 
 
 
@@ -32,7 +34,13 @@ async function postChoice(req, res) {
       return;
     }
 
+
+
+
+
     await db.collection(COLLECTIONS.CHOICES).insertOne(choice);
+
+   
 
     res.send(STATUS_CODE.CREATED);
   } catch (error) {
@@ -59,7 +67,7 @@ async function getPollChoices(req, res) {
       return;
     }
 
-    const pollChoices = await db.collection(COLLECTIONS.CHOICES).find().toArray();
+    const pollChoices = await db.collection(COLLECTIONS.CHOICES).find({ pollId: pollId }).toArray();
     return res.status(STATUS_CODE.OK).send(pollChoices);
 
   } catch (error) {
@@ -91,11 +99,13 @@ async function postVote(req, res) {
         choiceId: new ObjectId(choiceId)
       });
 
+      const addVote = await db
+      .collection(COLLECTIONS.CHOICES)
+      .updateOne({ _id: ObjectId(choiceId) }, {$inc:{"votes": 1}})
 
 
 
-
-    return res.status(STATUS_CODE.OK).send(voteChoice);
+    return res.sendStatus(STATUS_CODE.OK);
 
   } catch (error) {
     res.status(STATUS_CODE.SERVER_ERROR).send(error.message);
